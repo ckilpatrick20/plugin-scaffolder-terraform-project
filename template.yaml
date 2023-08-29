@@ -60,7 +60,7 @@ spec:
             allowedHosts:
               - github.com
             allowedOwners:
-              - user:ckilpatrick20
+              - ckilpatrick20
   steps:
     - id: template
       name: Fetch Skeleton + Template
