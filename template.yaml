@@ -10,7 +10,7 @@ spec:
   owner: user:guest
   type: website
   parameters:
-    - title: Provide information for creating your new VueJS project
+    - title: Provide information for creating your new Terraform project
       required:
         - component_id
         - owner
