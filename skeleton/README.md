@@ -2,9 +2,18 @@
 
 ${{values.description}}
 
-## Terraform AWS Project Template
+---
 
-This repository contains a basic project skeleton for deploying a single tenant AWS infrastructure using Terraform. The project sets up a simple "Hello World" EC2 instance in your desired AWS region.
+# Terraform Template Repository
+
+This repository provides a template for setting up Terraform projects. It includes all the necessary files and directory structure to manage your infrastructure as code using Terraform.
+
+## Requirements
+
+1. Terraform >= 0.14
+2. AWS CLI installed and configured
+3. Git
+4. [pre-commit](https://pre-commit.com/#install)
 
 ## Project Structure
 
@@ -12,76 +21,116 @@ The project follows this directory structure:
 
 ```
 project-root/
+├── README.md
 ├── main.tf
 ├── provider.tf
 ├── variables.tf
-├── terraform.tfvars
 ├── outputs.tf
+├── .pre-commit-config.yaml
+├── modules/
+│   ├── ec2_instance/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   └── ...
 ```
 
-- `main.tf`: Contains the Terraform configuration for creating the EC2 instance.
-- `provider.tf`: Configures the AWS provider for Terraform to interact with AWS services.
-- `variables.tf`: Defines input variables for the Terraform configuration (not used in this example).
-- `terraform.tfvars`: Provides values for the input variables (not used in this example).
-- `outputs.tf`: Defines output values to display after applying the Terraform configuration.
+## Directory Structure
 
-## Getting Started
+- `main.tf`: This file contains the main set of configuration code for your Terraform project.
+- `provider.tf`: This file defines the provider and required version.
+- `variables.tf`: This file defines variables used in the Terraform configuration.
+- `outputs.tf`: This file defines any outputs from your Terraform project.
+- `.pre-commit-config.yaml`: This file contains configurations for pre-commit hooks.
+- `modules/`: This directory contains Terraform modules.
+  - `ec2_instance/`: An example module to set up an AWS EC2 instance.
 
-1. Clone this repository to your local machine:
+## Instructions
 
-```sh
+### 1. Clone the Repository
+
+First, clone this repository to your local machine.
+
+```bash
 git clone <repository_url>
-cd project-root
 ```
 
-2. Open the `provider.tf` file and replace `"your_aws_access_key"` and `"your_aws_secret_key"` with your actual AWS credentials.
+### 2. Install pre-commit Hooks
 
-3. Modify the `main.tf` file to configure the EC2 instance as needed (AMI, instance type, etc.).
+Install the pre-commit hooks defined in `.pre-commit-config.yaml`.
 
-4. Run the following commands in your terminal:
-
-```sh
-terraform init  # Initializes the project and downloads plugins
-terraform apply # Applies the configuration to create the EC2 instance
+```bash
+pre-commit install
 ```
 
-5. After the instance is created, you'll see its public IP in the terminal output.
+### 3. Initialize Terraform
 
-## Recommended IDE Setup for Visual Studio Code
+Navigate to the `project-root/` directory and initialize Terraform.
 
-Visual Studio Code (VSCode) is a popular code editor that's well-suited for working with Terraform projects. Here's a recommended setup along with helpful extensions:
-
-### Extensions:
-
-1. **Terraform** by HashiCorp - Provides syntax highlighting, linting, and autocompletion for Terraform files.
-2. **AWS Toolkit** - Helps with managing AWS resources directly from VSCode.
-3. **HashiCorp Configuration Language (HCL)** - Provides enhanced support for HCL, the language used in Terraform configurations.
-4. **GitLens** - Enhances your Git experience within VSCode.
-
-To install extensions, open VSCode, go to the Extensions view by clicking on the square icon in the sidebar or pressing `Ctrl + Shift + X`, and search for the extensions mentioned above.
-
-## Important Notes
-
-- Make sure to handle your AWS credentials securely. Consider using IAM roles for production environments.
-- Modify the project configuration in `main.tf` to match your requirements.
-- Use variables and outputs for more complex projects to increase maintainability.
-
-## Cleanup
-
-When you're done experimenting with the project, you can clean up resources:
-
-```sh
-terraform destroy # Destroys all resources created by Terraform
+```bash
+cd project-root/
+terraform init
 ```
 
-## Contributing
+### 4. Configure Variables
 
-Feel free to contribute to this project by opening issues or pull requests.
+Open `variables.tf` and configure the necessary variables. You can also create a `terraform.tfvars` file to set these values.
 
-## License
+### 5. Plan and Apply
 
-This project is licensed under the [MIT License](LICENSE).
+Run a plan to ensure everything looks good.
 
----
+```bash
+terraform plan
+```
 
-Feel free to customize the README further to match your preferences and any additional information you'd like to provide.
+If the plan looks good, apply it.
+
+```bash
+terraform apply
+```
+
+You'll be prompted to confirm that you want to create the resources defined in your `main.tf` file. Type `yes` to proceed.
+
+### 6. Outputs
+
+After `terraform apply` completes, you'll see outputs defined in `outputs.tf`.
+
+### 7. Cleanup
+
+After you are done using the infrastructure or want to start over, run the following command to destroy all the resources created by Terraform:
+
+```bash
+terraform destroy
+```
+
+## Usage of Modules
+
+Modules in the `modules/` directory can be used by referring to their path in the `main.tf` file. For example, to use the `ec2_instance` module:
+
+```hcl
+module "ec2_instance" {
+  source = "./modules/ec2_instance"
+  // Variables specific to the ec2_instance module
+}
+```
+
+## Pre-Commit Hooks
+
+This repository uses pre-commit hooks to run `terraform fmt`, `terraform validate` before each commit. These hooks ensure that your Terraform files are correctly formatted and validated.
+
+### To Run Hooks Manually
+
+You can also manually run the pre-commit hooks with the following command:
+
+```bash
+pre-commit run --all-files
+```
+
+### To Skip Hooks
+
+You can skip pre-commit hooks with the follow command:
+
+```bash
+git commit --no-verify -m "your commit message"
+```
