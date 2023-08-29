@@ -10,15 +10,15 @@ spec:
   owner: user:guest
   type: website
   parameters:
-    - title: Provide information for creating your new Terraform project
+    - title: Provide information for creating your new Terraform repository
       required:
-        - component_id
+        - module_name
         - owner
       properties:
-        component_id:
-          title: Name
+        module_name:
+          title: Module Name
           type: string
-          description: This is a unique name for the component, which will be used in the package.json and readme.
+          description: This is a unique name for the Terraform module within the Liatrio GitHub org
           ui:field: EntityNamePicker
         description:
           title: Description
@@ -27,11 +27,27 @@ spec:
         owner:
           title: Owner
           type: string
-          description: Owner of the component
+          description: Owner of the repository
           ui:field: OwnerPicker
           ui:options:
             allowedKinds:
+              - User
               - Group
+    - title: Choose a provider
+      properties:
+        provider_name:
+          title: Provider Name
+          type: string
+          description: The provider that will be populated within the provider.tf file
+          default: aws
+          enum:
+            - aws
+            - gcp
+            - azure
+          enumNames:
+            - 'AWS'
+            - 'GCP'
+            - 'Azure'
     - title: Choose a location
       required:
         - repoUrl
@@ -43,6 +59,8 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
+            allowedOwners:
+              - user:ckilpatrick20
   steps:
     - id: template
       name: Fetch Skeleton + Template
@@ -52,7 +70,7 @@ spec:
         copyWithoutRender:
           - .github/workflows/*
         values:
-          component_id: ${{ parameters.component_id }}
+          module_name: ${{ parameters.module_name }}
           description: ${{ parameters.description }}
           destination: ${{ parameters.repoUrl | parseRepoUrl }}
           owner: ${{ parameters.owner }}
@@ -63,7 +81,7 @@ spec:
       input:
         allowedHosts:
           - github.com
-        description: This is ${{ parameters.component_id }}
+        description: This is ${{ parameters.module_name }}
         repoUrl: ${{ parameters.repoUrl }}
 
     - id: register
